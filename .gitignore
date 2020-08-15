@@ -8,6 +8,7 @@ node_modules/
 # testing
 /coverage
 cypress/videos/
+*.spec.js.mp4
 
 # production
 build/
