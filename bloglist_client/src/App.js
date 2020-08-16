@@ -1,24 +1,33 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import LoginForm from './components/LoginForm'
+import { initializeBlogs, like, createBlog, deleteBlog } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const dispatch = useDispatch()
+  const blogs = useSelector((state) => state.blogs)
+
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
+  // const [blogs, setBlogs] = useState([])
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [user, setUser] = useState(null)
 
   const [newBlogFormVisible, setNewBlogFormVisible] = useState(false)
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-  }, [])
+  // useEffect(() => {
+  //   blogService.getAll().then(blogs =>
+  //     setBlogs(blogs)
+  //   )
+  // }, [])
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem('user')
@@ -65,15 +74,8 @@ const App = () => {
   }
 
   const likeBlog = async (likedBlog) => {
-    const payload = {
-      ...likedBlog,
-      likes: likedBlog.likes + 1,
-    }
-
     try {
-      await blogService.update(likedBlog.id, payload)
-      const updatedBlogs = blogs.map(blog => blog.id === likedBlog.id ? { ...blog, likes: payload.likes } : blog)
-      setBlogs(updatedBlogs)
+      dispatch(like(likedBlog))
     } catch (error) {
       console.log(error.response)
       if (error.response.data.error) {
@@ -84,11 +86,10 @@ const App = () => {
     }
   }
 
-  const createBlog = async (blogObject) => {
-    console.log('createBlog')
+  const handleCreateBlog = async (blogObject) => {
+    console.log('handleCreateBlog')
     try {
-      const returnedBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(returnedBlog))
+      dispatch(createBlog(blogObject))
       displayNotification('Blog added')
     } catch (error) {
       console.log(error.response)
@@ -100,13 +101,11 @@ const App = () => {
     }
   }
 
-  const deleteBlog = async (blogObject) => {
+  const handleDeleteBlog = async (blogObject) => {
     try {
-      await blogService.delete(blogObject.id)
-      const updatedBlogs = blogs.filter(blog => blog.id !== blogObject.id)
-      setBlogs(updatedBlogs)
+      dispatch(deleteBlog(blogObject))
     } catch (error) {
-      console.log(error.response)
+      console.log(error)
       if (error.response.data.error) {
         displayError(error.response.data.error)
       } else {
@@ -142,14 +141,14 @@ const App = () => {
           </div>
           <div className="blogList">
             {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} handleLike={likeBlog} handleDelete={deleteBlog} user={user} />
+              <Blog key={blog.id} blog={blog} handleLike={likeBlog} handleDelete={handleDeleteBlog} user={user} />
             )}
           </div>
         </div>
         <div style={showWhenVisible}>
           <h2>Create new blog</h2>
           <NewBlogForm
-            createBlog={createBlog}
+            createBlog={handleCreateBlog}
           />
           <button onClick={() => setNewBlogFormVisible(false)}>Cancel</button>
         </div>
