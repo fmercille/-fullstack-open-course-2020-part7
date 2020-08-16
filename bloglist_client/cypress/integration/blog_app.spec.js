@@ -32,6 +32,7 @@ describe('Blog app', function () {
       cy.get('#loginButton').click()
 
       cy.contains('Foo Bar is logged in')
+      cy.get('div.notification').should('have.css', 'color', 'rgb(0, 128, 0)')
     })
 
     it('fails with wrong credentials', function() {
@@ -39,7 +40,7 @@ describe('Blog app', function () {
       cy.get('#password').type('wrong')
       cy.get('#loginButton').click()
 
-      cy.get('.error')
+      cy.get('div.notification')
         .should('contain', 'Wrong credentials')
         .and('have.css', 'color', 'rgb(255, 0, 0)')
 
@@ -60,6 +61,7 @@ describe('Blog app', function () {
       cy.get('#newBlogSubmitButton').click()
 
       cy.get('.blogList').contains('My Awesome Blog')
+      cy.get('div.notification').should('have.css', 'color', 'rgb(0, 128, 0)')
     })
 
     describe('And there are blogs', function() {

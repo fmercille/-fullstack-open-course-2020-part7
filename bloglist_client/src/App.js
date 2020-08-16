@@ -7,27 +7,20 @@ import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import LoginForm from './components/LoginForm'
 import { initializeBlogs, like, createBlog, deleteBlog } from './reducers/blogReducer'
+import { setNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const dispatch = useDispatch()
   const blogs = useSelector((state) => state.blogs)
+  const notificationMessage = useSelector((state) => state.notification)
 
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [dispatch])
 
-  // const [blogs, setBlogs] = useState([])
-  const [notificationMessage, setNotificationMessage] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
   const [user, setUser] = useState(null)
 
   const [newBlogFormVisible, setNewBlogFormVisible] = useState(false)
-
-  // useEffect(() => {
-  //   blogService.getAll().then(blogs =>
-  //     setBlogs(blogs)
-  //   )
-  // }, [])
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem('user')
@@ -39,19 +32,11 @@ const App = () => {
   }, [])
 
   const displayNotification = (message) => {
-    setNotificationMessage(message)
-
-    setTimeout(() => {
-      setNotificationMessage(null)
-    }, 5000)
+    dispatch(setNotification('notice', message, 5))
   }
 
   const displayError = (message) => {
-    setErrorMessage(message)
-
-    setTimeout(() => {
-      setErrorMessage(null)
-    }, 5000)
+    dispatch(setNotification('error', message, 5))
   }
 
   const handleLogin = async ({ username, password }) => {
@@ -120,8 +105,7 @@ const App = () => {
   if (user === null) {
     return (
       <>
-        <Notification message={notificationMessage} messageType='notice' />
-        <Notification message={errorMessage} messageType='error' />
+        <Notification message={notificationMessage.message} messageType={notificationMessage.type} />
         <LoginForm handleLogin={handleLogin} />
       </>
     )
@@ -129,8 +113,7 @@ const App = () => {
     blogs.sort((a, b) => a.likes > b.likes ? -1 : (a.likes < b.likes ? 1 : 0))
     return (
       <>
-        <Notification message={notificationMessage} messageType='notice' />
-        <Notification message={errorMessage} messageType='error' />
+        <Notification message={notificationMessage.message} messageType={notificationMessage.type} />
         <div>
           <h2>blogs</h2>
           <div>

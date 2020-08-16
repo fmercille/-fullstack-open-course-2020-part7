@@ -6,7 +6,7 @@ const Notification = ({ message, messageType }) => {
     return null
   } else {
     return (
-      <div className={messageType}>
+      <div className={`notification ${messageType}`}>
         {message}
       </div>
     )
