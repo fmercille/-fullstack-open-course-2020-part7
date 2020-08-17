@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Notification from './components/Notification'
-import NewBlogForm from './components/NewBlogForm'
+import NewBlogFormContainer from './components/NewBlogFormContainer'
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
-import { initializeBlogs, createBlog } from './reducers/blogReducer'
+import { initializeBlogs } from './reducers/blogReducer'
 import { setNotification } from './reducers/notificationReducer'
 import { login, logout } from './reducers/userReducer'
 
@@ -17,8 +17,6 @@ const App = () => {
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [dispatch])
-
-  const [newBlogFormVisible, setNewBlogFormVisible] = useState(false)
 
   const displayNotification = (message) => {
     dispatch(setNotification('notice', message, 5))
@@ -43,24 +41,6 @@ const App = () => {
     displayNotification('Logout successful')
   }
 
-  const handleCreateBlog = async (blogObject) => {
-    console.log('handleCreateBlog')
-    try {
-      dispatch(createBlog(blogObject))
-      displayNotification('Blog added')
-    } catch (error) {
-      console.log(error.response)
-      if (error.response.data.error) {
-        displayError(error.response.data.error)
-      } else {
-        displayError('An error occured')
-      }
-    }
-  }
-
-  const hideWhenVisible = { display: newBlogFormVisible ? 'none' : '' }
-  const showWhenVisible = { display: newBlogFormVisible ? '' : 'none' }
-
   if (user === null) {
     return (
       <>
@@ -76,18 +56,9 @@ const App = () => {
         <div>
           {user.name} is logged in <button id="logout" onClick={handleLogout}>Logout</button>
         </div>
-        <BlogList blogs={blogs} />
-        <div style={hideWhenVisible}>
-          <button id="newBlogButton" onClick={() => setNewBlogFormVisible(true)}>New blog</button>
-        </div>
 
-        <div style={showWhenVisible}>
-          <h2>Create new blog</h2>
-          <NewBlogForm
-            createBlog={handleCreateBlog}
-          />
-          <button onClick={() => setNewBlogFormVisible(false)}>Cancel</button>
-        </div>
+        <BlogList blogs={blogs} />
+        <NewBlogFormContainer />
       </>
     )
   }

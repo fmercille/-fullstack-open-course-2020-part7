@@ -29,9 +29,9 @@ const Blog = ({ blog }) => {
     } catch (error) {
       console.log(error.response)
       if (error.response.data.error) {
-        dispatch(setNotification('error', error.response.data.error, 5))
+        dispatch(setNotification('error', error.response.data.error))
       } else {
-        dispatch(setNotification('An error occured', error.response.data.error, 5))
+        dispatch(setNotification('error', 'An error occured'))
       }
     }
   }
@@ -43,9 +43,9 @@ const Blog = ({ blog }) => {
     } catch (error) {
       console.log(error)
       if (error.response.data.error) {
-        dispatch(setNotification('error', error.response.data.error, 5))
+        dispatch(setNotification('error', error.response.data.error))
       } else {
-        dispatch(setNotification('An error occured', error.response.data.error, 5))
+        dispatch(setNotification('error', 'An error occured'))
       }
     }
   }
