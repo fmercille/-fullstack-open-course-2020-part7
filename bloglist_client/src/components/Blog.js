@@ -1,8 +1,15 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useDispatch, useSelector } from 'react-redux'
+import { like, deleteBlog } from '../reducers/blogReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
-const Blog = ({ blog, handleLike, handleDelete, user }) => {
+
+const Blog = ({ blog }) => {
   const [expanded, setExpanded] = useState(false)
+  const user = useSelector(state => state.user)
+  const dispatch = useDispatch()
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -15,15 +22,31 @@ const Blog = ({ blog, handleLike, handleDelete, user }) => {
     display: (blog.user.username === user.username ? '' : 'none')
   }
 
-  const like = (event) => {
+  const handleLike = (event) => {
     event.preventDefault()
-    handleLike(blog)
+    try {
+      dispatch(like(blog))
+    } catch (error) {
+      console.log(error.response)
+      if (error.response.data.error) {
+        dispatch(setNotification('error', error.response.data.error, 5))
+      } else {
+        dispatch(setNotification('An error occured', error.response.data.error, 5))
+      }
+    }
   }
 
-  const deleteBlog = (event) => {
+  const handleDelete = (event) => {
     event.preventDefault()
-    if (window.confirm(`Delete "${blog.title}" by ${blog.author}?`)) {
-      handleDelete(blog)
+    try {
+      dispatch(deleteBlog(blog))
+    } catch (error) {
+      console.log(error)
+      if (error.response.data.error) {
+        dispatch(setNotification('error', error.response.data.error, 5))
+      } else {
+        dispatch(setNotification('An error occured', error.response.data.error, 5))
+      }
     }
   }
 
@@ -35,13 +58,13 @@ const Blog = ({ blog, handleLike, handleDelete, user }) => {
           {blog.url}
         </div>
         <div className="blogLikes">
-          Likes {blog.likes} <button onClick={like} className="likeButton">like</button>
+          Likes {blog.likes} <button onClick={handleLike} className="likeButton">like</button>
         </div>
         <div>
           {blog.user.name}
         </div>
         <div style={deleteButtonStyle} className="deleteButton">
-          <button onClick={deleteBlog}>remove</button>
+          <button onClick={handleDelete}>remove</button>
         </div>
       </>
     )
@@ -57,9 +80,6 @@ const Blog = ({ blog, handleLike, handleDelete, user }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  handleLike: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
 }
 
 export default Blog
