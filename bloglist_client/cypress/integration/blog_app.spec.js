@@ -53,6 +53,14 @@ describe('Blog app', function () {
       cy.login({ username: 'foobar', password: 'password123' })
     })
 
+    it('can log out', function() {
+      cy.get('#logout').click()
+      cy.get('div.notification')
+        .contains('Logout successful')
+        .should('have.css', 'color', 'rgb(0, 128, 0)')
+      // expect(localStorage.getItem('user')).to.be.null
+    })
+
     it('a new blog can be created', function() {
       cy.get('#newBlogButton').click()
       cy.get('#titleInput').type('My Awesome Blog')

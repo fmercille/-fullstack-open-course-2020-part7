@@ -1,6 +1,6 @@
 const initialState = {
   notification: null,
-  type: null
+  type: 'none'
 }
 
 const reducer = (state = initialState, action) => {

@@ -1,35 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
-import loginService from './services/login'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import LoginForm from './components/LoginForm'
 import { initializeBlogs, like, createBlog, deleteBlog } from './reducers/blogReducer'
 import { setNotification } from './reducers/notificationReducer'
+import { login, logout } from './reducers/userReducer'
 
 const App = () => {
   const dispatch = useDispatch()
   const blogs = useSelector((state) => state.blogs)
   const notificationMessage = useSelector((state) => state.notification)
+  const user = useSelector((state) => state.user)
 
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [dispatch])
 
-  const [user, setUser] = useState(null)
-
   const [newBlogFormVisible, setNewBlogFormVisible] = useState(false)
-
-  useEffect(() => {
-    const loggedInUser = window.localStorage.getItem('user')
-    if (loggedInUser) {
-      const user = JSON.parse(loggedInUser)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
 
   const displayNotification = (message) => {
     dispatch(setNotification('notice', message, 5))
@@ -39,22 +28,18 @@ const App = () => {
     dispatch(setNotification('error', message, 5))
   }
 
-  const handleLogin = async ({ username, password }) => {
-    try {
-      const user = await loginService.login({ username, password })
-      window.localStorage.setItem('user', JSON.stringify(user))
-      setUser(user)
-      blogService.setToken(user.token)
-      displayNotification('Login successful')
-    } catch (exception) {
-      displayError('Wrong credentials')
-    }
-    console.log('Logging in with', username, password)
+  const handleLogin = ({ username, password }) => {
+    dispatch(login(username, password))
+      .then(() => {
+        displayNotification('Login successful')
+      })
+      .catch((error) => {
+        displayError('Wrong credentials')
+      })
   }
 
   const handleLogout = async () => {
-    window.localStorage.clear()
-    setUser(null)
+    dispatch(logout())
     displayNotification('Logout successful')
   }
 
@@ -117,7 +102,7 @@ const App = () => {
         <div>
           <h2>blogs</h2>
           <div>
-            {user.name} is logged in <button onClick={handleLogout}>Logout</button>
+            {user.name} is logged in <button id="logout" onClick={handleLogout}>Logout</button>
           </div>
           <div style={hideWhenVisible}>
             <button id="newBlogButton" onClick={() => setNewBlogFormVisible(true)}>New blog</button>
