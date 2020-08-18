@@ -122,5 +122,13 @@ describe('Blog app', function () {
         })
       })
     })
+
+    describe('users view', function() {
+      it('gets list of users and the number of blogs they created', function() {
+        cy.visit('http://localhost:3000/users')
+        cy.contains('Users')
+        cy.get('table#userTable').should('contain', 'blogs created')
+      })
+    })
   })
 })

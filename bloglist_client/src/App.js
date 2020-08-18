@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Switch, Route } from 'react-router-dom'
 import Notification from './components/Notification'
 import NewBlogFormContainer from './components/NewBlogFormContainer'
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
+import UserList from './components/UserList'
 import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUsers } from './reducers/usersReducer'
 import { setNotification } from './reducers/notificationReducer'
 import { login, logout } from './reducers/userReducer'
 
@@ -16,6 +19,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   }, [dispatch])
 
   const displayNotification = (message) => {
@@ -49,7 +53,6 @@ const App = () => {
       </>
     )
   } else {
-    blogs.sort((a, b) => a.likes > b.likes ? -1 : (a.likes < b.likes ? 1 : 0))
     return (
       <>
         <Notification message={notificationMessage.message} messageType={notificationMessage.type} />
@@ -57,8 +60,15 @@ const App = () => {
           {user.name} is logged in <button id="logout" onClick={handleLogout}>Logout</button>
         </div>
 
-        <BlogList blogs={blogs} />
-        <NewBlogFormContainer />
+        <Switch>
+          <Route path="/users">
+            <UserList blogs={blogs} />
+          </Route>
+          <Route path="/">
+            <BlogList blogs={blogs} />
+            <NewBlogFormContainer />
+          </Route>
+        </Switch>
       </>
     )
   }
