@@ -121,14 +121,22 @@ describe('Blog app', function () {
           }
         })
       })
-    })
 
-    describe('users view', function() {
-      it('gets list of users and the number of blogs they created', function() {
-        cy.visit('http://localhost:3000/users')
-        cy.contains('Users')
-        cy.get('table#userTable').should('contain', 'blogs created')
+      describe('users view', function () {
+        it('gets list of users and the number of blogs they created', function () {
+          cy.visit('http://localhost:3000/users')
+          cy.contains('Users')
+          cy.get('table#userTable').should('contain', 'blogs created')
+        })
+
+        it('clicks on user name displays user details', function () {
+          cy.visit('http://localhost:3000/users')
+          cy.get('table#userTable tr#userRow_foobar td a').click()
+          cy.contains('added blogs')
+          cy.contains('Go To Statement Considered Harmful')
+        })
       })
     })
+
   })
 })

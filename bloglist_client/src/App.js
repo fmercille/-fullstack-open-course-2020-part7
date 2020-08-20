@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, useRouteMatch } from 'react-router-dom'
 import Notification from './components/Notification'
 import NewBlogFormContainer from './components/NewBlogFormContainer'
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
 import UserList from './components/UserList'
+import UserDetail from './components/UserDetail'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import { setNotification } from './reducers/notificationReducer'
@@ -13,9 +14,10 @@ import { login, logout } from './reducers/userReducer'
 
 const App = () => {
   const dispatch = useDispatch()
-  const blogs = useSelector((state) => state.blogs)
-  const notificationMessage = useSelector((state) => state.notification)
-  const user = useSelector((state) => state.user)
+  const blogs = useSelector(state => state.blogs)
+  const notificationMessage = useSelector(state => state.notification)
+  const user = useSelector(state => state.user)
+  const users = useSelector(state => state.users)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -45,6 +47,11 @@ const App = () => {
     displayNotification('Logout successful')
   }
 
+  const userMatch = useRouteMatch('/users/:id')
+  const userDetail = userMatch
+    ? users.find(user => user.id === userMatch.params.id)
+    : null
+
   if (user === null) {
     return (
       <>
@@ -61,6 +68,9 @@ const App = () => {
         </div>
 
         <Switch>
+          <Route path="/users/:id">
+            <UserDetail user={userDetail} />
+          </Route>
           <Route path="/users">
             <UserList blogs={blogs} />
           </Route>

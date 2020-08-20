@@ -1,6 +1,6 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const UserList = () => {
   const users = useSelector(state => state.users)
@@ -11,13 +11,19 @@ const UserList = () => {
       <h2>Users</h2>
       <table id="userTable">
         <thead>
-          <td></td>
-          <td>blogs created</td>
+          <tr>
+            <th></th>
+            <th>blogs created</th>
+          </tr>
         </thead>
         <tbody>
           {users.map(user =>
-            <tr key={user.id}>
-              <td>{user.name}</td>
+            <tr key={user.id} id={`userRow_${user.username}`}>
+              <td>
+                <Link to={`/users/${user.id}`} >
+                  {user.name}
+                </Link>
+              </td>
               <td>{blogs.reduce((n, blog) => blog.user.username === user.username ? n+1 : n, 0)}</td>
             </tr>
           )}
@@ -25,10 +31,6 @@ const UserList = () => {
       </table>
     </div>
   )
-}
-
-UserList.propTypes = {
-  users: PropTypes.array.isRequired
 }
 
 export default UserList
