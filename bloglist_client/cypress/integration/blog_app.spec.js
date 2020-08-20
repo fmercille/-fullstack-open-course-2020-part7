@@ -87,39 +87,28 @@ describe('Blog app', function () {
       })
 
       it('user can like a blog', function() {
-        cy.get('div.blogList > div:nth-child(2) .showButton').click()
-        cy.get('div.blogList > div:nth-child(2)').should('contain', 'Likes 7')
-        cy.get('div.blogList > div:nth-child(2) .likeButton').click()
-        cy.get('div.blogList > div:nth-child(2)').should('contain', 'Likes 8')
+        cy.get('div.blogList > div:nth-child(2) a').click()
+        cy.get('div.blogLikes').should('contain', 'Likes 7')
+        cy.get('div.blogLikes .likeButton').click()
+        cy.get('div.blogLikes').should('contain', 'Likes 8')
+        cy.visit('http://localhost:3000/blogs')
+        cy.get('div.blogList > div:nth-child(2) a').click()
+        cy.get('div.blogLikes').should('contain', 'Likes 8')
       })
 
       it('user can delete their own blog', function() {
-        cy.get('.blog').should('have.length', 3)
-        cy.get('div.blogList > div:nth-child(2) .showButton').click()
-        cy.get('div.blogList > div:nth-child(2) .deleteButton > button').click()
-        cy.get('.blog').should('have.length', 2)
+        cy.get('div.blogList > div').should('have.length', 3)
+        cy.get('div.blogList > div:nth-child(2) a').click()
+        cy.get('div.deleteButton > button').click()
+        cy.visit('http://localhost:3000/blogs')
+        cy.get('div.blogList > div').should('have.length', 2)
       })
 
       it('user cannot delete someone else\'s blog', function() {
         cy.login({ username: 'spamham', password: 'password123' })
-        cy.get('div.blogList > div:nth-child(2) .showButton').click()
-        cy.get('div.blogList > div:nth-child(2) .deleteButton').should('have.css', 'display', 'none')
-      })
-
-      it('blogs are ordered by number of likes', function() {
-        cy.get('.showButton').click({ multiple: true })
-        cy.get('.blogLikes').then(($likes) => {
-          let lastLikes = Infinity
-          const likesRe = /Likes\D+(\d+)\D/
-
-          for (let i = 0; i < $likes.length; i++) {
-            const matches = $likes[i].innerText.match(likesRe)
-            const blogLikes = parseInt(matches[1])
-
-            cy.expect(blogLikes <= lastLikes).to.be.true
-            lastLikes = blogLikes
-          }
-        })
+        cy.get('div.blogList > div').should('have.length', 3)
+        cy.get('div.blogList > div:nth-child(2) a').click()
+        cy.get('div.deleteButton').should('have.css', 'display', 'none')
       })
 
       describe('users view', function () {
@@ -134,6 +123,28 @@ describe('Blog app', function () {
           cy.get('table#userTable tr#userRow_foobar td a').click()
           cy.contains('added blogs')
           cy.contains('Go To Statement Considered Harmful')
+        })
+      })
+
+      describe('blogs view', function() {
+        it('gets list of blogs', function() {
+          const blogTitles = [
+            'React patterns',
+            'Go To Statement Considered Harmful',
+            'Canonical string reduction'
+          ]
+
+          cy.visit('http://localhost:3000/blogs')
+          blogTitles.map(title => cy.get('div.blogList').should('contain', title))
+        })
+
+        it('clicks on blog title displays blog details', function() {
+          cy.get('div.blogList > div:nth-child(2) a').click()
+          cy.get('h1').should('contain', 'React patterns Michael Chan')
+          cy.get('div.blog')
+            .should('contain', 'https://reactpatterns.com')
+            .should('contain', 'Likes 7')
+            .should('contain', 'Foo Bar')
         })
       })
     })

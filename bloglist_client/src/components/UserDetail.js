@@ -2,9 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 
-const UserDetail = (user) => {
+const UserDetail = ({ user }) => {
   const blogs = useSelector(state => state.blogs)
-  if (!user || !(user.user)) {
+  if (!user) {
     return null
   }
 
@@ -14,7 +14,7 @@ const UserDetail = (user) => {
       <h2>added blogs</h2>
       <ul>
         {blogs
-          .filter(blog => blog.user.id === user.user.id)
+          .filter(blog => blog.user.id === user.id)
           .map(blog =>
             <li key={blog.id}>{blog.title}</li>
           )}

@@ -28,7 +28,7 @@ const reducer = (state = [], action) => {
 
 const like = (blog) => {
   return async dispatch => {
-    await blogService.update(blog.id, { ...blog, votes: blog.likes + 1 })
+    await blogService.update(blog.id, { ...blog, likes: blog.likes + 1 })
     dispatch({
       type: 'BLOG.LIKE',
       blog: blog
