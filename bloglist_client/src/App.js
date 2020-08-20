@@ -8,6 +8,7 @@ import BlogList from './components/BlogList'
 import Blog from './components/Blog'
 import UserList from './components/UserList'
 import UserDetail from './components/UserDetail'
+import Menu from './components/Menu'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import { setNotification } from './reducers/notificationReducer'
@@ -43,11 +44,6 @@ const App = () => {
       })
   }
 
-  const handleLogout = async () => {
-    dispatch(logout())
-    displayNotification('Logout successful')
-  }
-
   const userMatch = useRouteMatch('/users/:id')
   const userDetail = userMatch
     ? users.find(user => user.id === userMatch.params.id)
@@ -68,10 +64,8 @@ const App = () => {
   } else {
     return (
       <>
+        <Menu />
         <Notification message={notificationMessage.message} messageType={notificationMessage.type} />
-        <div>
-          {user.name} is logged in <button id="logout" onClick={handleLogout}>Logout</button>
-        </div>
 
         <Switch>
           <Route path="/blogs/:id">
