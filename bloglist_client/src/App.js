@@ -12,7 +12,7 @@ import Menu from './components/Menu'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import { setNotification } from './reducers/notificationReducer'
-import { login, logout } from './reducers/userReducer'
+import { login } from './reducers/userReducer'
 
 const App = () => {
   const dispatch = useDispatch()
