@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
-import { like, deleteBlog } from '../reducers/blogReducer'
+import { like, deleteBlog, addComment } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
 
@@ -46,6 +46,20 @@ const Blog = ({ blog }) => {
     }
   }
 
+  const handleNewComment = (event) => {
+    event.preventDefault()
+    try {
+      dispatch(addComment(blog.id, event.target.comment.value))
+      event.target.comment.value = ''
+    } catch (error) {
+      if (error.response.data.error) {
+        dispatch(setNotification('error', error.response.data.error))
+      } else {
+        dispatch(setNotification('error', 'An error occured'))
+      }
+    }
+  }
+
   return (
     <div className="blog">
       <h1>
@@ -64,6 +78,13 @@ const Blog = ({ blog }) => {
       </div>
       <div style={deleteButtonStyle} className="deleteButton">
         <button onClick={handleDelete}>remove</button>
+      </div>
+      <h2>comments</h2>
+      <div>
+        <form onSubmit={handleNewComment}>
+          <input type='text' name='comment' />
+          <button type='submit'>add comment</button>
+        </form>
       </div>
       <div>
         <ul>

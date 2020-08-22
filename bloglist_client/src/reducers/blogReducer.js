@@ -15,6 +15,18 @@ const reducer = (state = [], action) => {
   case 'BLOG.DELETE':
     newState = state.filter(blog => blog.id !== action.blog.id)
     break
+  case 'BLOG.NEW_COMMENT':
+    newState = state.map((blog) => {
+      if (blog.id === action.id) {
+        return {
+          ...blog,
+          comments: [...blog.comments, action.comment]
+        }
+      } else {
+        return blog
+      }
+    })
+    break
   case 'BLOG.INIT':
     newState = action.data
     break
@@ -66,11 +78,23 @@ const initializeBlogs = () => {
   }
 }
 
+const addComment = (id, comment) => {
+  return async dispatch => {
+    await blogService.addComment(id, comment)
+    dispatch({
+      type: 'BLOG.NEW_COMMENT',
+      id,
+      comment
+    })
+  }
+}
+
 export default reducer
 
 export {
   like,
   createBlog,
   deleteBlog,
+  addComment,
   initializeBlogs
 }
