@@ -72,4 +72,18 @@ blogsRouter.put('/:id', async (request, response) => {
   }
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+  if(!request.body.comment) {
+    return response.status(400).json({ error: 'Cannot add empty comment' })
+  }
+  const result = await Blog.findByIdAndUpdate(request.params.id, { $push: { 'comments': request.body.comment } })
+
+  if (result) {
+    response.json(result)
+  } else {
+    console.log(`Blog id ${request.params.id} not found`)
+    response.status(404).end()
+  }
+})
+
 module.exports = blogsRouter

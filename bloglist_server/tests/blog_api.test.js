@@ -55,7 +55,8 @@ describe('blog API - POST /', () => {
       title: 'My Awesome Blog',
       author: 'John McFoobar',
       url: 'https://www.example.net/blog',
-      likes: 9001
+      likes: 9001,
+      comments: []
     }
 
     const { token, user } = await login()
@@ -79,6 +80,7 @@ describe('blog API - POST /', () => {
       title: 'My Awesome Blog',
       author: 'John McFoobar',
       url: 'https://www.example.net/blog',
+      comments: []
     }
 
     const { token, user } = await login()
@@ -198,5 +200,37 @@ describe('blog API - PUT /:id', () => {
     expect(response.body.likes).toBe(3)
     const blogsInDbAfter = await helper.blogsInDb()
     expect(blogsInDbAfter).toContainEqual(blogToUpdate)
+  })
+})
+
+describe('blog API - POST /:id/comments', () => {
+  test('Add a comment succeeds', async () => {
+    const blogsInDbBefore = await helper.blogsInDb()
+    const payload = { comment: 'Test comment' }
+    const blogToUpdate = blogsInDbBefore.find(blog => blog.id === '5a422b3a1b54a676234d17f9')
+    expect(blogToUpdate.comments).toHaveLength(2)
+    await api.post(`${BASE_PATH}/${blogToUpdate.id}/comments`)
+      .send(payload)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsInDbAfter = await helper.blogsInDb()
+    const blogToCheck = blogsInDbAfter.find(blog => blog.id === '5a422b3a1b54a676234d17f9')
+    expect(blogToCheck.comments).toHaveLength(3)
+  })
+
+  test('Add an empty comment does not do anything', async () => {
+    const blogsInDbBefore = await helper.blogsInDb()
+    const payload = { comment: '' }
+    const blogToUpdate = blogsInDbBefore.find(blog => blog.id === '5a422b3a1b54a676234d17f9')
+    expect(blogToUpdate.comments).toHaveLength(2)
+    await api.post(`${BASE_PATH}/${blogToUpdate.id}/comments`)
+      .send(payload)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsInDbAfter = await helper.blogsInDb()
+    const blogToCheck = blogsInDbAfter.find(blog => blog.id === '5a422b3a1b54a676234d17f9')
+    expect(blogToCheck.comments).toHaveLength(2)
   })
 })
