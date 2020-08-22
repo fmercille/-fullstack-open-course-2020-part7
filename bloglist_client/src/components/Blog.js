@@ -12,6 +12,10 @@ const Blog = ({ blog }) => {
     return null
   }
 
+  if (!blog.comments) {
+    blog.comments = []
+  }
+
   const deleteButtonStyle = {
     display: ((user && blog.user.username === user.username) ? '' : 'none')
   }
@@ -56,10 +60,15 @@ const Blog = ({ blog }) => {
         Likes {blog.likes} <button onClick={handleLike} className="likeButton">like</button>
       </div>
       <div>
-        {blog.user.name}
+        added by {blog.user.name}
       </div>
       <div style={deleteButtonStyle} className="deleteButton">
         <button onClick={handleDelete}>remove</button>
+      </div>
+      <div>
+        <ul>
+          {blog.comments.map(comment => <li key={Math.floor(Math.random() * 1000000)}>{comment}</li>)}
+        </ul>
       </div>
     </div>
   )
