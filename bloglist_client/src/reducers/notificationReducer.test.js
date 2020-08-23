@@ -18,14 +18,14 @@ describe('notification reducer', () => {
     const action = {
       type: 'NOTIFICATION.SET',
       notification: 'This is a test',
-      messageType: 'notice'
+      messageType: 'success'
     }
     deepFreeze(state)
     const newState = notificationReducer(state, action)
     expect(newState).toEqual(
       {
         message: 'This is a test',
-        type: 'notice'
+        type: 'success'
       }
     )
   })
@@ -33,12 +33,12 @@ describe('notification reducer', () => {
   test('clears the notification correctly', () => {
     const notification = {
       message: 'Previous notification',
-      type: 'notice'
+      type: 'success'
     }
     const actionSet = {
       type: 'NOTIFICATION.SET',
       notification: notification.message,
-      messageType: 'notice'
+      messageType: 'success'
     }
     const actionClear = { type: 'NOTIFICATION.CLEAR' }
     const newState = notificationReducer(null, actionSet)

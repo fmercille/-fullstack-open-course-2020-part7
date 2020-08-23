@@ -21,8 +21,8 @@ describe('Blog app', function () {
 
   it('Login form is shown', function () {
     cy.contains('Login')
-    cy.contains('Username')
-    cy.contains('Password')
+    cy.get('#username')
+    cy.get('#password')
   })
 
   describe('Login', function() {
@@ -32,7 +32,7 @@ describe('Blog app', function () {
       cy.get('#loginButton').click()
 
       cy.contains('Foo Bar is logged in')
-      cy.get('div.notification').should('have.css', 'color', 'rgb(0, 128, 0)')
+      cy.get('div.notification').should('have.class', 'MuiAlert-standardSuccess')
     })
 
     it('fails with wrong credentials', function() {
@@ -42,7 +42,7 @@ describe('Blog app', function () {
 
       cy.get('div.notification')
         .should('contain', 'Wrong credentials')
-        .and('have.css', 'color', 'rgb(255, 0, 0)')
+        .and('have.class', 'MuiAlert-standardError')
 
       cy.get('html').should('not.contain', 'Foo Bar')
     })
@@ -55,10 +55,8 @@ describe('Blog app', function () {
 
     it('can log out', function() {
       cy.get('#logout').click()
-      cy.get('div.notification')
-        .contains('Logout successful')
-        .should('have.css', 'color', 'rgb(0, 128, 0)')
-      // expect(localStorage.getItem('user')).to.be.null
+      cy.get('div.notification').contains('Logout successful')
+      cy.get('div.notification').should('have.class', 'MuiAlert-standardSuccess')
     })
 
     it('a new blog can be created', function() {
@@ -69,7 +67,7 @@ describe('Blog app', function () {
       cy.get('#newBlogSubmitButton').click()
 
       cy.get('.blogList').contains('My Awesome Blog')
-      cy.get('div.notification').should('have.css', 'color', 'rgb(0, 128, 0)')
+      cy.get('div.notification').should('have.class', 'MuiAlert-standardSuccess')
     })
 
     describe('And there are blogs', function() {
@@ -87,27 +85,27 @@ describe('Blog app', function () {
       })
 
       it('user can like a blog', function() {
-        cy.get('div.blogList > div:nth-child(2) a').click()
+        cy.get('table.blogList > tbody > tr:nth-child(2) > td > a').click()
         cy.get('div.blogLikes').should('contain', 'Likes 7')
         cy.get('div.blogLikes .likeButton').click()
         cy.get('div.blogLikes').should('contain', 'Likes 8')
         cy.visit('http://localhost:3000/blogs')
-        cy.get('div.blogList > div:nth-child(2) a').click()
+        cy.get('table.blogList > tbody > tr:nth-child(2) > td > a').click()
         cy.get('div.blogLikes').should('contain', 'Likes 8')
       })
 
       it('user can delete their own blog', function() {
-        cy.get('div.blogList > div').should('have.length', 3)
-        cy.get('div.blogList > div:nth-child(2) a').click()
+        cy.get('table.blogList > tbody > tr').should('have.length', 3)
+        cy.get('table.blogList > tbody > tr:nth-child(2) > td > a').click()
         cy.get('div.deleteButton > button').click()
         cy.visit('http://localhost:3000/blogs')
-        cy.get('div.blogList > div').should('have.length', 2)
+        cy.get('table.blogList > tbody > tr').should('have.length', 2)
       })
 
       it('user cannot delete someone else\'s blog', function() {
         cy.login({ username: 'spamham', password: 'password123' })
-        cy.get('div.blogList > div').should('have.length', 3)
-        cy.get('div.blogList > div:nth-child(2) a').click()
+        cy.get('table.blogList > tbody > tr').should('have.length', 3)
+        cy.get('table.blogList > tbody > tr:nth-child(2) > td > a').click()
         cy.get('div.deleteButton').should('have.css', 'display', 'none')
       })
 
@@ -115,13 +113,13 @@ describe('Blog app', function () {
         it('gets list of users and the number of blogs they created', function () {
           cy.visit('http://localhost:3000/users')
           cy.contains('Users')
-          cy.get('table#userTable').should('contain', 'blogs created')
+          cy.get('table#userTable').should('contain', 'Blogs created')
         })
 
         it('clicks on user name displays user details', function () {
           cy.visit('http://localhost:3000/users')
           cy.get('table#userTable tr#userRow_foobar td a').click()
-          cy.contains('added blogs')
+          cy.contains('Added blogs')
           cy.contains('Go To Statement Considered Harmful')
         })
       })
@@ -135,12 +133,12 @@ describe('Blog app', function () {
           ]
 
           cy.visit('http://localhost:3000/blogs')
-          blogTitles.map(title => cy.get('div.blogList').should('contain', title))
+          blogTitles.map(title => cy.get('table.blogList').should('contain', title))
         })
 
         it('clicks on blog title displays blog details', function() {
-          cy.get('div.blogList > div:nth-child(2) a').click()
-          cy.get('h1').should('contain', 'React patterns Michael Chan')
+          cy.get('table.blogList > tbody > tr:nth-child(2) > td > a').click()
+          cy.get('h3').should('contain', 'React patterns Michael Chan')
           cy.get('div.blog')
             .should('contain', 'https://reactpatterns.com')
             .should('contain', 'Likes 7')

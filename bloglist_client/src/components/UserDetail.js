@@ -1,24 +1,56 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+
+import { makeStyles } from '@material-ui/core/styles'
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Typography
+} from '@material-ui/core'
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+  },
+}))
 
 const UserDetail = ({ user }) => {
   const blogs = useSelector(state => state.blogs)
+  const classes = useStyles()
+  const history = useHistory()
+
+  const handleBlogClick = (blog) => {
+    console.log(blog)
+    history.push(`/blogs/${blog.id}`)
+  }
+
   if (!user) {
     return null
   }
 
   return (
     <div>
-      <h1>{user.name}</h1>
-      <h2>added blogs</h2>
-      <ul>
+      <Typography variant="h2">
+        {user.name}
+      </Typography>
+      <Typography variant="h3">
+        Added blogs
+      </Typography>
+      <List className={classes.root}>
         {blogs
           .filter(blog => blog.user.id === user.id)
-          .map(blog =>
-            <li key={blog.id}>{blog.title}</li>
-          )}
-      </ul>
+          .map(blog => (
+            <ListItem id={`userBlog_${blog.id}`} key={blog.id} dense button onClick={() => handleBlogClick(blog)}>
+              <ListItemText id={`listItem_${blog.id}`} primary={blog.title} />
+            </ListItem>
+          ))}
+      </List>
+
     </div>
   )
 }

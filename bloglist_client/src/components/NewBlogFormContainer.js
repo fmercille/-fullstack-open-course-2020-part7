@@ -3,6 +3,9 @@ import { useDispatch } from 'react-redux'
 import { createBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
 import NewBlogForm from './NewBlogForm'
+import {
+  Button
+} from '@material-ui/core'
 
 const NewBlogFormContainer = () => {
   const dispatch = useDispatch()
@@ -15,7 +18,7 @@ const NewBlogFormContainer = () => {
     console.log('handleCreateBlog')
     try {
       dispatch(createBlog(blogObject))
-      dispatch(setNotification('notice', 'Blog added'))
+      dispatch(setNotification('success', 'Blog added'))
     } catch (error) {
       console.log(error.response)
       if (error.response.data.error) {
@@ -29,7 +32,7 @@ const NewBlogFormContainer = () => {
   return (
     <>
       <div style={hideWhenVisible}>
-        <button id="newBlogButton" onClick={() => setNewBlogFormVisible(true)}>New blog</button>
+        <Button id="newBlogButton" variant="contained" color="primary" onClick={() => setNewBlogFormVisible(true)}>New blog</Button>
       </div>
 
       <div style={showWhenVisible}>
@@ -37,7 +40,7 @@ const NewBlogFormContainer = () => {
         <NewBlogForm
           createBlog={handleCreateBlog}
         />
-        <button onClick={() => setNewBlogFormVisible(false)}>Cancel</button>
+        <Button variant="contained" color="secondary" onClick={() => setNewBlogFormVisible(false)}>Cancel</Button>
       </div>
     </>
   )

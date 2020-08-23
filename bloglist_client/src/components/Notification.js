@@ -1,14 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Alert } from '@material-ui/lab'
 
 const Notification = ({ message, messageType }) => {
-  if (message === null) {
+  if (message === null || !['error', 'info', 'success', 'warning'].includes(messageType)) {
     return null
   } else {
     return (
-      <div className={`notification ${messageType}`}>
+      <Alert severity={messageType} className="notification">
         {message}
-      </div>
+      </Alert>
     )
   }
 }

@@ -13,6 +13,7 @@ import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import { setNotification } from './reducers/notificationReducer'
 import { login } from './reducers/userReducer'
+import { Container } from '@material-ui/core'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -27,7 +28,7 @@ const App = () => {
   }, [dispatch])
 
   const displayNotification = (message) => {
-    dispatch(setNotification('notice', message, 5))
+    dispatch(setNotification('success', message, 5))
   }
 
   const displayError = (message) => {
@@ -56,14 +57,14 @@ const App = () => {
 
   if (user === null) {
     return (
-      <>
+      <Container>
         <Notification message={notificationMessage.message} messageType={notificationMessage.type} />
         <LoginForm handleLogin={handleLogin} />
-      </>
+      </Container>
     )
   } else {
     return (
-      <>
+      <Container>
         <Menu />
         <Notification message={notificationMessage.message} messageType={notificationMessage.type} />
 
@@ -86,7 +87,7 @@ const App = () => {
             <NewBlogFormContainer />
           </Route>
         </Switch>
-      </>
+      </Container>
     )
   }
 }

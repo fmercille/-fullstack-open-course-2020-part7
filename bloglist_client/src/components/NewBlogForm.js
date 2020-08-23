@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import {
+  Button,
+  TextField
+} from '@material-ui/core'
 
 const NewBlogForm = ({ createBlog }) => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
-
-  const handleTitleChange = (event) => setNewTitle(event.target.value)
-  const handleAuthorChange = (event) => setNewAuthor(event.target.value)
-  const handleUrlChange = (event) => setNewUrl(event.target.value)
 
   const addBlog = (event) => {
     event.preventDefault()
@@ -25,11 +25,19 @@ const NewBlogForm = ({ createBlog }) => {
   return (
     <div>
       <form onSubmit={addBlog} className="newBlogForm">
-        <div>Title: <input id="titleInput" value={newTitle} onChange={handleTitleChange} /></div>
-        <div>Author: <input id="authorInput" value={newAuthor} onChange={handleAuthorChange} /></div>
-        <div>Url: <input id="urlInput" value={newUrl} onChange={handleUrlChange} /></div>
         <div>
-          <button id="newBlogSubmitButton" type="submit">Add</button>
+          <TextField label="Title" id="titleInput" value={newTitle} onChange={({ target }) => setNewTitle(target.value)} />
+        </div>
+        <div>
+          <TextField label="Author" id="authorInput" value={newAuthor} onChange={({ target }) => setNewAuthor(target.value)} />
+        </div>
+        <div>
+          <TextField label="URL" id="urlInput" value={newUrl} onChange={({ target }) => setNewUrl(target.value)} />
+        </div>
+        <div>
+          <Button id="newBlogSubmitButton" variant="contained" color="primary" type="submit">
+            Add
+          </Button>
         </div>
       </form>
     </div>

@@ -3,47 +3,41 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { logout } from '../reducers/userReducer'
 import { setNotification } from '../reducers/notificationReducer'
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Button
+} from '@material-ui/core'
 
 const Menu = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
 
-  const navStyle = {
-    display: 'block',
-    backgroundColor: '#BBBBBB',
-    padding: '1px'
-  }
-
-  const menuStyle = {
-    paddingInlineStart: '0px'
-  }
-
-  const menuItemStyle = {
-    display: 'inline',
-    paddingLeft: '10px'
-  }
-
-  const handleLogout = async () => {
+  const handleLogout = async (event) => {
+    event.preventDefault()
     dispatch(logout())
-    dispatch(setNotification('notice', 'Logout successful', 5))
+    dispatch(setNotification('success', 'Logout successful', 5))
   }
 
   const loggedInUser = user
-    ? <li style={menuItemStyle}>{user.name} is logged in <button id="logout" onClick={handleLogout}>Logout</button></li>
+    ? <>{user.name} is logged in <Button id="logout" color="inherit" component={Link} to="#" onClick={handleLogout}>Logout</Button></>
     : <></>
 
   return (
-    <nav style={navStyle}>
-      <ul style={menuStyle}>
-        <li style={menuItemStyle}>
-          <Link to='/blogs'>blogs</Link>
-        </li>
-        <li style={menuItemStyle}>
-          <Link to='/users'>users</Link>
-        </li>
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton edge="start" color="inherit" aria-label="menu">
+        </IconButton>
+        <Button color="inherit" component={Link} to="/blogs">
+          blogs
+        </Button>
+        <Button color="inherit" component={Link} to="/users">
+          users
+        </Button>
         {loggedInUser}
-      </ul>
-    </nav>
+      </Toolbar>
+    </AppBar>
   )
 }
 

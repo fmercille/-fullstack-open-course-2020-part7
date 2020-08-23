@@ -3,11 +3,29 @@ import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 import { like, deleteBlog, addComment } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
+import { makeStyles } from '@material-ui/core/styles'
+import {
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography
+} from '@material-ui/core'
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+  },
+}))
 
 const Blog = ({ blog }) => {
   const user = useSelector(state => state.user)
   const dispatch = useDispatch()
+  const classes = useStyles()
+
   if (!blog) {
     return null
   }
@@ -61,37 +79,44 @@ const Blog = ({ blog }) => {
   }
 
   return (
-    <div className="blog">
-      <h1>
-        {blog.title} {blog.author}
-      </h1>
-      <div>
-        <a href={blog.url}>
-          {blog.url}
-        </a>
-      </div>
-      <div className="blogLikes">
+    <Typography>
+      <div className="blog">
+        <Typography variant="h3">
+          {blog.title} {blog.author}
+        </Typography>
+        <div>
+          <a href={blog.url}>
+            {blog.url}
+          </a>
+        </div>
+        <div className="blogLikes">
         Likes {blog.likes} <button onClick={handleLike} className="likeButton">like</button>
-      </div>
-      <div>
+        </div>
+        <div>
         added by {blog.user.name}
+        </div>
+        <div style={deleteButtonStyle} className="deleteButton">
+          <button onClick={handleDelete}>remove</button>
+        </div>
+        <h2>comments</h2>
+        <div>
+          <form onSubmit={handleNewComment}>
+            <TextField label="Comment" name="comment" />
+            <Button variant="contained" color="primary" type="submit">Add comment</Button>
+          </form>
+        </div>
+        <div>
+          <List className={classes.root}>
+            {blog.comments.map(comment => (
+              <ListItem key={Math.floor(Math.random() * 1000000)} dense>
+                <ListItemText primary={comment} />
+              </ListItem>
+            ))}
+          </List>
+
+        </div>
       </div>
-      <div style={deleteButtonStyle} className="deleteButton">
-        <button onClick={handleDelete}>remove</button>
-      </div>
-      <h2>comments</h2>
-      <div>
-        <form onSubmit={handleNewComment}>
-          <input type='text' name='comment' />
-          <button type='submit'>add comment</button>
-        </form>
-      </div>
-      <div>
-        <ul>
-          {blog.comments.map(comment => <li key={Math.floor(Math.random() * 1000000)}>{comment}</li>)}
-        </ul>
-      </div>
-    </div>
+    </Typography>
   )
 }
 
